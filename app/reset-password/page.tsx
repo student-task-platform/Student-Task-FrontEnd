@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
@@ -9,7 +9,9 @@ import { AuthInput } from '@/components/auth/AuthInput';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { Lock } from 'lucide-react';
 
-export default function ResetPasswordPage() {
+export const dynamic = 'force-dynamic';
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [password, setPassword] = useState('');
@@ -196,5 +198,23 @@ export default function ResetPasswordPage() {
         </button>
       </form>
     </AuthShell>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <AuthShell>
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Loading...</h2>
+          <p className="text-sm text-gray-600 mt-1">Please wait</p>
+        </div>
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      </AuthShell>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

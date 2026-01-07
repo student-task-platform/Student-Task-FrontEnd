@@ -13,12 +13,14 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let auth: Auth;
 
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
+// Only initialize Firebase in the browser
+if (typeof window !== 'undefined') {
+  if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
+  auth = getAuth(app);
 }
-
-auth = getAuth(app);
 
 export { app, auth };
